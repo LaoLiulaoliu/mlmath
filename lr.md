@@ -1,5 +1,5 @@
 线性回归的推导，数学解释
-![](http://latex.codecogs.com/svg.latex?
+
 Input: $$
 X =
   \begin{bmatrix}
