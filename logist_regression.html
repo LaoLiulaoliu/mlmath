@@ -13204,7 +13204,7 @@ $$</p>
            &amp;= \theta_i + \sum\limits_{j=0}^m (y^j - H_\theta(x)^j) x_i^j
 \end{align}
 $$</p>
-<p>Gradient decend: $$
+<p>Gradient descent: $$
 \theta_i = \theta_i - \sum\limits_{j=0}^m (H_\theta(x)^j - y^j) x_i^j \tag{6}
 $$</p>
 
@@ -13266,6 +13266,45 @@ f(p) = ln(\frac{p}{1-p})
 = \sum\limits_{i=0}^n \theta_i x_i
 $$
 logit变换最初使用在人口增长模型中$^{[2]}$</p>
+<h5 id="Sigmoid&#30340;&#28608;&#27963;&#20989;&#25968;&#29305;&#24615;">Sigmoid&#30340;&#28608;&#27963;&#20989;&#25968;&#29305;&#24615;<a class="anchor-link" href="#Sigmoid&#30340;&#28608;&#27963;&#20989;&#25968;&#29305;&#24615;">&#182;</a></h5><p>Sigmoid函数是神经网络中的激活函数，不常用，因为Sigmoid函数在因变量接近0或1时，曲线非常平滑，导数几乎为0，导致梯度下降收敛非常缓慢，梯度消失，Sigmoid进入饱和区间中。</p>
+<p>多层神经网络中，反向传播时，随着网络层次增加，各个导数相乘，越靠近输入层的乘积越接近0，参数更新的幅度越小，速率越慢，有实验发现含有四个隐藏层的网络结构中，第一层比第四层慢了接近100倍。多层神经网络中，Sigmoid更容易饱和，网络就几乎不学习。三层神经网络（两层激活函数）的数学模型（没有截距和正则化）：</p>
+<p>Forward propagation: $$
+\begin{align}
+z_1 &amp;= w_{11} x_1 + w_{12} x_2 \\
+H_1 &amp;= g(z_1) \\
+z_2 &amp;= w_{21} h_{11} + w_{22} h_{12} \\
+H_2 &amp;= g(z_2) \\
+z_3 &amp;= w_{31} h_{21} + w_{32} h_{22} \\
+L &amp;= \ell(z_3, y) \\
+\end{align}
+$$</p>
+<p>Back-propagation: $$
+\begin{align}
+\frac{\partial L}{\partial w_{11}} = \left(\frac{\partial L}{\partial z_3} \cdot \frac{\partial z_3}{\partial h_{21}} \cdot \frac{\partial h_{21}}{\partial z_2} \cdot \frac{\partial z_2}{\partial h_{11}} \cdot \frac{\partial h_{11}}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_{11}}, \\
+\frac{\partial L}{\partial z_3} \cdot \frac{\partial z_3}{\partial h_{21}} \cdot \frac{\partial h_{21}}{\partial z_2} \cdot \frac{\partial z_2}{\partial h_{12}} \cdot \frac{\partial h_{12}}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_{11}}, \\
+\frac{\partial L}{\partial z_3} \cdot \frac{\partial z_3}{\partial h_{22}} \cdot \frac{\partial h_{22}}{\partial z_2} \cdot \frac{\partial z_2}{\partial h_{11}} \cdot \frac{\partial h_{11}}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_{11}}, \\
+\frac{\partial L}{\partial z_3} \cdot \frac{\partial z_3}{\partial h_{22}} \cdot \frac{\partial h_{22}}{\partial z_2} \cdot \frac{\partial z_2}{\partial h_{12}} \cdot \frac{\partial h_{12}}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_{11}} \right)
+\end{align}
+$$</p>
+<p>反向传播中这几项 $\left(\frac{\partial h_{21}}{\partial z_2} \cdot \frac{\partial h_{11}}{\partial z_1} \right)$ 是Sigmoid函数的导数，所以越乘越小。</p>
+<p>如果权重值初始化过大，Sigmoid函数值越接近于0或1，导数越接近0，导致大多数神经元将饱和，权重矩阵的初始化必须特别留意。</p>
+<p>Sigmoid函数值在(0, 1)之间，非zero-centered，对不同参数的迭代方向相反，使得收敛时梯度下降走Z字型路线。$^{[3]}$</p>
+<p>深度学习中一般以梯度下降更新参数，$$
+\omega \leftarrow \omega - \eta \cdot \frac{\partial L}{\partial \omega}
+$$</p>
+<p>对于参数$\omega_i$来说，$$
+\frac{\partial L}{\partial \omega_i} = \frac{\partial L}{\partial g} \frac{\partial g}{\partial z} \frac{\partial z}{\partial \omega_i} = x_i \cdot \frac{\partial L}{\partial g} \frac{\partial g}{\partial z}
+$$</p>
+<p>参数更新为，$$
+\omega_i \leftarrow \omega_i - \eta \cdot x_i \cdot \frac{\partial L}{\partial g} \frac{\partial g}{\partial z}
+$$</p>
+<p>$\eta$是模型超参数学习率，$\frac{\partial L}{\partial g} \frac{\partial g}{\partial z}$是固定函数的导数，所以$\omega_i$更新方向是由$x_i$决定的。</p>
+<p>我们以二维的情况为例，参数$\omega_0, \omega_1$的最优解$\omega_0^*, \omega_1^*$，优化目标分别是$$
+\begin{cases}  \omega_0 &lt; \omega_0^* \\
+\omega_1 \ge \omega_1^*
+\end{cases}
+$$
+需要$\omega_0$增大，$\omega_1$减小，那就要求$x_0, x_1$符号相反。上一级神经元采用Sigmoid函数作为激活函数，输出中间层H总是正数，无法做到$x_0, x_1$（即$h_{10}, h_{11}$）符号相反。模型为了收敛不得不走Z字型。优化目标在南边，优化参数一个往东一个往西。下面示意图来源网络，实际中因为迭代时数值很小，不容易画图看出。<img src="./img/z_gradient_descent.png" alt=""></p>
 
 </div>
 </div>
@@ -13273,7 +13312,7 @@ logit变换最初使用在人口增长模型中$^{[2]}$</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Maximum-likelihood-function-$^{[3]}$">Maximum likelihood function $^{[3]}$<a class="anchor-link" href="#Maximum-likelihood-function-$^{[3]}$">&#182;</a></h4><p>概率是某事件发生之前，根据环境参数对其发生可能性的预测。比如抛硬币之前，根据硬币是密度均匀分布推测正反面概率都是50%。</p>
+<h4 id="Maximum-likelihood-function-$^{[4]}$">Maximum likelihood function $^{[4]}$<a class="anchor-link" href="#Maximum-likelihood-function-$^{[4]}$">&#182;</a></h4><p>概率是某事件发生之前，根据环境参数对其发生可能性的预测。比如抛硬币之前，根据硬币是密度均匀分布推测正反面概率都是50%。</p>
 <p>似然是某事件发生后，根据确定的结果推测产生结果的环境参数。比如抛1000次硬币，496次朝上，504次朝下，可以大致推断出硬币密度分布均匀，抛硬币的人没有作弊。</p>
 <p>如果用$\theta$表示环境参数，x表示结果，概率可表示为，$P(x|\theta)$，似然可以表示为，$L(\theta|x)$.</p>
 <p>最大似然估计函数是样本的函数，根据样本的观测值$x_1,x_2,...x_n,$带入统计表达式，得到最大似然估计值。</p>
@@ -13293,11 +13332,11 @@ $$H(X) = -\sum_{i=1}^n p(x_i) log(p(x_i))$$</p>
 <p>掷骰子的信息熵，$H = (-1/4 * log_2(1/4)) * 4 = 2$。</p>
 <p>如果骰子密度分布不均匀，ABCD各面朝上概率分别为1/2, 1/4, 1/8, 1/8，则信息熵，$H = - 1/2*log_2(1/2) - 1/4*log_2(1/4) - 1/8*log_2(1/8) - 1/8*log_2(1/8) = 1.75$。</p>
 <p>可见，事件的n个状态发生概率都一致，都为1/n，事件信息熵最大。</p>
-<p>连续随机变量x，其概率密度函数p(x)，信息熵定义$^{[4]}$： $$H(X) = \int_x p(x)I(x)dx = -\int_x p(x)log(p(x))dx$$</p>
+<p>连续随机变量x，其概率密度函数p(x)，信息熵定义$^{[5]}$： $$H(X) = \int_x p(x)I(x)dx = -\int_x p(x)log(p(x))dx$$</p>
 <p><strong>交叉熵</strong>是衡量在真实分布下，使用非真实分布能够消除系统不确定性的大小。
 $$H(p, q) = -\sum_{i=1}^n p(x_i) log(q(x_i))$$
 p(x)是事件真实分布下的概率，q(x)是事件非真实分布下的概率。在二值交叉熵中q(x) = 1 - p(x)。衡量log(q(x))在p(x)分布下的期望。</p>
-<p>掷骰子游戏中$^{[5]}$，四个面以相等的概率$1/4$出现，掷出后用碗盖住骰子，使看不到结果，假如结果是A面朝上，我们需要猜两次才能确定是A，第一次问是AB吗，或者是CD吗？第二次问是A吗，或者是B吗？我们猜测时用的四个面的概率分布和真实概率分布相同，$H(p,q) = (-1/4 * log_2(1/4)) * 4 = (1/4 * 2次) * 4 = 2次$。这个交叉熵相当于我们猜测次数的期望。</p>
+<p>掷骰子游戏中$^{[6]}$，四个面以相等的概率$1/4$出现，掷出后用碗盖住骰子，使看不到结果，假如结果是A面朝上，我们需要猜两次才能确定是A，第一次问是AB吗，或者是CD吗？第二次问是A吗，或者是B吗？我们猜测时用的四个面的概率分布和真实概率分布相同，$H(p,q) = (-1/4 * log_2(1/4)) * 4 = (1/4 * 2次) * 4 = 2次$。这个交叉熵相当于我们猜测次数的期望。</p>
 <p>如果四个面ABCD各面朝上概率分别为1/2, 1/4, 1/8, 1/8，但庄家作弊没有告诉我们，我们只能假设四个面等概率向上，真实概率分布和我们猜测用的概率分布不同，$$
 \begin{align}
 H(p,q) &amp;= 1/2*log_2(4) + 1/4*log_2(4) + 1/8*log_2(4) + 1/8*log_2(4) \\
@@ -13316,9 +13355,10 @@ $$
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="References">References<a class="anchor-link" href="#References">&#182;</a></h3><p>[1] <a href="https://www.zhihu.com/question/36714044">如何理解logistic函数?</a></p>
 <p>[2] <a href="https://mathworld.wolfram.com/LogisticEquation.html">Logistic Equation</a></p>
-<p>[3] <a href="https://www.cnblogs.com/boceng/p/11358480.html">最大似然估计、n阶矩、协方差（矩阵）、（多元）高斯分布 学习摘要</a></p>
-<p>[4] <a href="https://www.cnblogs.com/wkang/p/10068475.html">机器学习中各种熵的定义及理解</a></p>
-<p>[5] <a href="https://mp.weixin.qq.com/s/8mlqF9d9rO5arENMaJyZ-Q">玩个游戏来理解交叉熵</a></p>
+<p>[3] <a href="https://liam.page/2018/04/17/zero-centered-active-function/">谈谈激活函数以零为中心的问题</a></p>
+<p>[4] <a href="https://www.cnblogs.com/boceng/p/11358480.html">最大似然估计、n阶矩、协方差（矩阵）、（多元）高斯分布 学习摘要</a></p>
+<p>[5] <a href="https://www.cnblogs.com/wkang/p/10068475.html">机器学习中各种熵的定义及理解</a></p>
+<p>[6] <a href="https://mp.weixin.qq.com/s/8mlqF9d9rO5arENMaJyZ-Q">玩个游戏来理解交叉熵</a></p>
 
 </div>
 </div>
