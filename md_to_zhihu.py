@@ -1,5 +1,6 @@
 # https://zhuanlan.zhihu.com/p/69142198
 import sys
+import os
 import re
 import contextlib
 
@@ -11,12 +12,16 @@ def replace(content):
     r = re.compile('\$\n*(.*?)\n*\$', re.DOTALL)
 
     content_new = r_double.sub(dollar_double, content)
+    return content_new
     return r.sub(dollar, content_new)
 
 
 if __name__ == '__main__':
+    """Usage: python3 md_to_zhihu.py generalized_linear_model.ipynb
+    """
+    os.system(f'jupyter nbconvert --to markdown {sys.argv[1]}')
     name, postfix = sys.argv[1].split('.')
-    with open(sys.argv[1]) as fd_r, open(name + '_zhihu.' + postfix, 'w') as fd_w:
+    with open(name + '.md') as fd_r, open(name + '_zhihu.md', 'w') as fd_w:
         content = fd_r.read()
         result = replace(content)
         fd_w.write(result)
