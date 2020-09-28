@@ -14470,7 +14470,22 @@ $$
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="&#24635;&#32467;">&#24635;&#32467;<a class="anchor-link" href="#&#24635;&#32467;">&#182;</a></h3><p>线性回归是高斯分布+最大似然估计的结果，logistic回归是伯努利分布+对数最大似然估计的结果，softmax回归是多项式分布+对数最大似然估计的结果。</p>
-<p>从其他角度推导GLM，很有启发性，推荐阅读：<a href="https://blog.csdn.net/fjsd155/article/details/88394222">广义线性模型GLM</a></p>
+<p>推荐阅读：</p>
+<ol>
+<li>从其他角度推导GLM，很有启发性，<a href="https://blog.csdn.net/fjsd155/article/details/88394222">广义线性模型GLM</a>。</li>
+<li>对GLM分析和应用讲的很好，<a href="https://zhuanlan.zhihu.com/p/110268967">广义线性模型(GLM)从人话到鬼话连篇</a></li>
+</ol>
+<p>这两篇文章有以下知识补充：</p>
+<ul>
+<li><p>在使用GLM时，必须指定输出的概率分布函数和联系函数（link function）。可以采用GLM代替各种常用的算法。</p>
+</li>
+<li><p>联系函数功能是把原始的y的取值范围，变换到线性预测的输出范围（将输出变量转换为正态性），并拟合当下数据。线性回归的联系函数是y，逻辑回归的联系函数是$log(\frac{p}{1-p})$，泊松分布的联系函数$log(y)$。</p>
+</li>
+<li><p>联系函数的反函数是响应函数（response function），功能是把输入变量的线性组合映射到预测目标y，例如logistic/sigmoid函数。</p>
+</li>
+<li><p>y可以表达三种含义：建模用的是分布，观察到的是采样，预测的是期望（$y = E[y|x] = h(x)$）。</p>
+</li>
+</ul>
 
 </div>
 </div>
