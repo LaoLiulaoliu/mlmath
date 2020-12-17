@@ -1,6 +1,6 @@
 # mlmath
 
-For now, it include linear regression, logistic regression, generalized linear model and momentum.
+For now, it include linear regression, logistic regression, generalized linear model, momentum and svd.
 
 
 ### use docker
@@ -15,4 +15,3 @@ docker push docker.pkg.github.com/laoliulaoliu/mlmath/IMAGE_NAME:VERSION
 2. use docker to launch
 ```
 docker run -p 8888:8888 mlmath jupyter notebook --allow-root
-```
