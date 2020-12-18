@@ -8,7 +8,7 @@ def replace(content):
     dollar_double = r'\n<img src="https://www.zhihu.com/equation?tex=\1\\\\" alt="\1\\\\" class="ee_img tr_noresize" eeimg="1">\n'
     r_double = re.compile(r'\$\$\n*(.*?)\n*\$\$', re.DOTALL)
 
-    dollar = r'\n<img src="https://www.zhihu.com/equation?tex=\1" alt="\1" class="ee_img tr_noresize" eeimg="1">\n'
+    dollar = r'<img src="https://www.zhihu.com/equation?tex=\1" alt="\1" class="ee_img tr_noresize" eeimg="1">\n'
     r = re.compile(r'\$\n*(.*?)\n*\$', re.DOTALL)
 
     content_new = r_double.sub(dollar_double, content)
