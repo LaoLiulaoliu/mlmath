@@ -16,7 +16,7 @@ def replace(content):
 
 
 if __name__ == '__main__':
-    """Usage: python3 md_to_zhihu.py generalized_linear_model.ipynb
+    """Usage: python3 to_zhihu_md.py generalized_linear_model.ipynb
     """
     os.system(f'jupyter nbconvert --to markdown {sys.argv[1]}')
     name, postfix = sys.argv[1].split('.')
