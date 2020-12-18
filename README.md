@@ -7,6 +7,7 @@ For now, it include linear regression, logistic regression, generalized linear m
 
 1. upload to github
 ```
+docker build -t mlmath:0.2 .
 docker login -u LaoLiulaoliu -p PERSONAL_TOKEN docker.pkg.github.com
 docker tag IMAGEID docker.pkg.github.com/laoliulaoliu/mlmath/IMAGE_NAME:VERSION
 docker push docker.pkg.github.com/laoliulaoliu/mlmath/IMAGE_NAME:VERSION
