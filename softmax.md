@@ -9,3 +9,6 @@ Sigmoid 单输出节点是确定概率值，Softmax输出节点的输出值变�
 3. 当输出值非常大，指数值可能会溢出，输出值-max(输出值) 优化。
 
 Softmax作为输出节点的激活函数，交叉熵作为损失函数。Softmax计算输出值容易溢出，交叉熵也容易溢出，所以一般统一实现。
+
+#### References
+[1] [一文详解Softmax函数](https://zhuanlan.zhihu.com/p/105722023)
