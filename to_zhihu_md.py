@@ -24,3 +24,4 @@ if __name__ == '__main__':
         content = fd_r.read()
         result = replace(content)
         fd_w.write(result)
+    os.system(f'rm {name + ".md"}')
