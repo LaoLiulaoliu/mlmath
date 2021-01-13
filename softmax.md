@@ -30,7 +30,8 @@ $$
 2. $i = j$
 $$
 \begin{aligned}
-\frac{\partial \hat{y}_i}{\partial z_j} &= \frac{e^{z_i} \sum_{c=1}^C e^{z_c} - e^{z_i} e^{z_j}}{(\sum_{c=1}^C e^{z_c})^2} \\
+\frac{\partial \hat{y}_i}{\partial z_j} &= \frac{e^{z_i} \sum_{c=1}^C e^{z_c} -
+e^{z_i} e^{z_j}}{(\sum_{c=1}^C e^{z_c})^2} \\
 &= \frac{e^{z_i} (\sum_{c=1}^C e^{z_c} - e^{z_j})}{(\sum_{c=1}^C e^{z_c})^2}
 \\
 &= \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \frac{\sum_{c=1}^C e^{z_c} -
@@ -64,13 +65,13 @@ $$L = P(y|x) = (p)^y (1-p)^{1-y}$$
 
 多分类问题：
 
-$$L = P(y|x) = \prod_{i=1}^{C} p_i^{y_i}$$
+$$L = P(y|x) = \prod_{c=1}^{C} p_c^{y_c}$$
 
 连乘结果容易为0，连加求导方便，用log transformation，似然函数取对数的负数，最小化对数似然函数，
 
-$$\operatorname*{arg\ min} L_{CE} = - log P(y|x) = -\sum_{i=1}^{C} y_i log p_i$$
+$$\operatorname*{arg\ min} L_{CE} = - log P(y|x) = -\sum_{c=1}^{C} y_c log p_c$$
 
-标准交叉熵形式中，正确类别的输出节点概率为1，同时$\sum_{i=1}^C y_i = 1$，所以上式化简为，
+标准交叉熵形式中，正确类别的输出节点概率为1，同时$\sum_{c=1}^C y_c = 1$，所以上式化简为，
 $$\operatorname*{arg\ min} L_{CE} = -log p_i$$
 
 Softmax 取对数加负号，得到交叉熵，跟标准交叉熵形式等价。
@@ -79,13 +80,27 @@ $$- log p_i = - log(\frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}})$$
 ###### 损失函数求导
 单个样本的Softmax Cross entropy 对网络输出变量 $z_j$的偏导数：
 $$\begin{aligned}
-\frac{\partial L_{CE}}{\partial z_j} &= - \sum_{i=1}^C y_i \frac{\partial log p_i}{\partial z_j} \\
-&= - \sum_{i=1}^C y_i \frac{1}{p_i} \frac{\partial p_i}{\partial z_j}
+\frac{\partial L_{CE}}{\partial z_j} &= - \sum_{c=1}^C y_c \frac{\partial log
+p_c}{\partial z_j} \\
+&= - \sum_{c=1}^C y_c \frac{1}{p_c} \frac{\partial p_c}{\partial z_j}
 \end{aligned}
 $$
 根据Softmax对 $z_j$的偏导数：
-$$\frac{\partial p_i}{\partial z_j} = \begin{cases} - p_i p_j, & \text {i $\neq$ j} \\ p_i - p_i^2, & \text{i = j} \end{cases}
+$$
+\frac{\partial p_i}{\partial z_j} = \begin{cases} - p_i p_j, & \text {i $\neq$
+j} \\ p_i - p_i^2, & \text{i = j} \end{cases}
 $$
 
+两种情况相加到偏导里，
+$$\begin{aligned}
+\frac{\partial L_{CE}}{\partial z_j} &= - \sum_{c=1}^C \frac{y_c}{p_c}
+\frac{\partial p_c}{\partial z_j} \\
+&= - \sum_{c \neq j}\frac{y_c}{p_c} * (- p_c p_j) - \frac{y_j}{p_j} (p_j -
+p_j^2) \\
+&= \sum_{c \neq j} y_c p_j - y_j + y_j p_j \\
+&= (\sum_{c \neq j} y_c + y_j) p_j - y_j \\
+&= p_j - y_j
+\end{aligned}
+$$
 #### References
 [1] [一文详解Softmax函数](https://zhuanlan.zhihu.com/p/105722023)
