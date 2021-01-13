@@ -10,32 +10,34 @@ Sigmoid 单输出节点是确定概率值，Softmax 输出节点的输出值是�
 
 #### Softmax 求导
 $$
-\mathcal{Softmax}(z_i) = \frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}}
+\mathcal{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}}
 $$
-i 是输出节点编号，C是class分类数，设 $\hat{y}_i = \frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}} = p_i$，则
+i 是网络输出节点编号，$z_i$ 是网络输出节点概率，C是class分类数。
+
+设 $\hat{y}_i = \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} = p_i$ 为类i 的概率，则
+
 1. $i \neq j$
 $$
-\begin{align}
+\begin{aligned}
 \frac{\partial \hat{y}_i}{\partial z_j} &= \frac{0 - e^{z_i}
-e^{z_j}}{(\Sigma_{c=1}^C e^{z_c})^2} \\
-&= -\frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}} \frac{e^{z_j}}{\Sigma_{c=1}^C
+e^{z_j}}{(\sum_{c=1}^C e^{z_c})^2} \\
+&= -\frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \frac{e^{z_j}}{\sum_{c=1}^C
 e^{z_c}} \\
 &= - p_i p_j
-\end{align}
+\end{aligned}
 $$
 
 2. $i = j$
 $$
-\begin{align}
-\frac{\partial \hat{y}_i}{\partial z_j} &= \frac{e^{z_i} \Sigma_{c=1}^C e^{z_c}
-- e^{z_i} e^{z_j}}{(\Sigma_{c=1}^C e^{z_c})^2} \\
-&= \frac{e^{z_i} (\Sigma_{c=1}^C e^{z_c} - e^{z_j})}{(\Sigma_{c=1}^C e^{z_c})^2}
+\begin{aligned}
+\frac{\partial \hat{y}_i}{\partial z_j} &= \frac{e^{z_i} \sum_{c=1}^C e^{z_c} - e^{z_i} e^{z_j}}{(\sum_{c=1}^C e^{z_c})^2} \\
+&= \frac{e^{z_i} (\sum_{c=1}^C e^{z_c} - e^{z_j})}{(\sum_{c=1}^C e^{z_c})^2}
 \\
-&= \frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}} \frac{\Sigma_{c=1}^C e^{z_c} -
-e^{z_j}}{\Sigma_{c=1}^C e^{z_c}} \\
+&= \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \frac{\sum_{c=1}^C e^{z_c} -
+e^{z_j}}{\sum_{c=1}^C e^{z_c}} \\
 &= p_i (1 - p_j) \\
 &= p_i - p_i^2
-\end{align}
+\end{aligned}
 $$
 
 #### 交叉熵损失函数
@@ -45,8 +47,8 @@ Softmax 是输出节点的激活函数，交叉熵是损失函数。
 Softmax 计算输出值容易溢出，交叉熵也容易溢出，一般统一实现。
 
 Softmax 分子分母同时乘以非零常数E，等式不变，
-$$\hat{y}_i = \frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}} = \frac{E e^{z_i}}{E
-\Sigma_{c=1}^C e^{z_c}} = \frac{e^{z_i + log(E)}}{\Sigma_{c=1}^C e^{z_c +
+$$\hat{y}_i = \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} = \frac{E e^{z_i}}{E
+\sum_{c=1}^C e^{z_c}} = \frac{e^{z_i + log(E)}}{\sum_{c=1}^C e^{z_c +
 log(E)}}
 $$
 
@@ -66,13 +68,23 @@ $$L = P(y|x) = \prod_{i=1}^{C} p_i^{y_i}$$
 
 连乘结果容易为0，连加求导方便，用log transformation，似然函数取对数的负数，最小化对数似然函数，
 
-$$\operatorname*{arg\ min} L = - log P(y|x) = -\Sigma_{i=1}^{C} y_i log p_i$$
+$$\operatorname*{arg\ min} L_{CE} = - log P(y|x) = -\sum_{i=1}^{C} y_i log p_i$$
 
-标准交叉熵形式中只针对正确类别的输出节点计算，$\Sigma_{i=1}^C y_i = 1$，所以，
-$$\operatorname*{arg\ min} L = -log p_i$$
+标准交叉熵形式中，正确类别的输出节点概率为1，同时$\sum_{i=1}^C y_i = 1$，所以上式化简为，
+$$\operatorname*{arg\ min} L_{CE} = -log p_i$$
 
 Softmax 取对数加负号，得到交叉熵，跟标准交叉熵形式等价。
-$$- log p_i = - log(\frac{e^{z_i}}{\Sigma_{c=1}^C e^{z_c}})
+$$- log p_i = - log(\frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}})$$
+
+###### 损失函数求导
+单个样本的Softmax Cross entropy 对网络输出变量 $z_j$的偏导数：
+$$\begin{aligned}
+\frac{\partial L_{CE}}{\partial z_j} &= - \sum_{i=1}^C y_i \frac{\partial log p_i}{\partial z_j} \\
+&= - \sum_{i=1}^C y_i \frac{1}{p_i} \frac{\partial p_i}{\partial z_j}
+\end{aligned}
+$$
+根据Softmax对 $z_j$的偏导数：
+$$\frac{\partial p_i}{\partial z_j} = \begin{cases} - p_i p_j, & \text {i $\neq$ j} \\ p_i - p_i^2, & \text{i = j} \end{cases}
 $$
 
 #### References
