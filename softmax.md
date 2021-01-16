@@ -87,11 +87,10 @@ p_c}{\partial z_j} \\
 $$
 
 根据Softmax对 $z_j$的偏导数：
-$$\frac{\partial p_i}{\partial z_j} =
-\begin{cases}
-- p_i p_j, & \text {i $\neq$ j}\\
-p_i - p_i^2, & \text {i = j}
-\end{cases}
+$$
+\frac{\partial p_i}{\partial z_j} =
+\begin{cases} - p_i p_j, & \text {i $\neq$ j}\\
+p_i - p_i^2, & \text {i = j} \end{cases}
 $$
 
 两种情况相加到偏导里，
