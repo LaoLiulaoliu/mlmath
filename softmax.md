@@ -1,7 +1,7 @@
 ### Softmax
 
 #### Softmax的形式
-Sigmoid 单输出节点是确定概率值，Softmax 输出节点的输出值是概率分布。
+Sigmoid 单输出节点是确定概率值（输入输出是标量），Softmax 输出节点的输出值是概率分布（输入输出是向量）。
 
 #### Softmax 为何加指数函数？
 1. 指数函数的曲线斜率逐渐增大，能够将输出值拉开距离。
@@ -102,5 +102,26 @@ p_j^2) \\
 &= p_j - y_j
 \end{aligned}
 $$
+
+#### Softmax 结构
+Softmax 是二分类Sigmoid 在多分类情况下的扩展。
+
+$$\mathcal{Sigmoid}(z) = \frac{1}{1 + e^{-z}} = \frac{e^z}{1 + e^z}$$
+
+$$\begin{aligned}
+\mathcal{Softmax}(z_i) &= \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \\
+&= \frac{\frac{e^{z_i}}{\sum_{c \neq i} e^{z_c}}}{1 + \frac{e^{z_i}}{\sum_{c \neq i} e^{z_c}}}
+\end{aligned}
+$$
+
+Softmax 只有两个类别的情况。
+$$\begin{aligned}
+\mathcal{Softmax}(z_i) &= \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \\
+&= \frac{e^{z_1}}{e^{z_1} + e^{z_2}}, & \text{when} C = 2 \\
+&= \frac{1}{1 + e^{z_2 - z_1}}, & \text{divide up and down}
+\end{aligned}
+$$
+
+$z_2 = 0, z_1 = z$
 #### References
 [1] [一文详解Softmax函数](https://zhuanlan.zhihu.com/p/105722023)
