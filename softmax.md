@@ -85,10 +85,12 @@ p_c}{\partial z_j} \\
 &= - \sum_{c=1}^C y_c \frac{1}{p_c} \frac{\partial p_c}{\partial z_j}
 \end{aligned}
 $$
+
 根据Softmax对 $z_j$的偏导数：
 $$
-\frac{\partial p_i}{\partial z_j} = \begin{cases} - p_i p_j, & \text {i $\neq$
-j} \\ p_i - p_i^2, & \text{i = j} \end{cases}
+\frac{\partial p_i}{\partial z_j} =
+\begin{cases} - p_i p_j, & \text {i $\neq$ j}\\
+p_i - p_i^2, & \text {i = j} \end{cases}
 $$
 
 两种情况相加到偏导里，
