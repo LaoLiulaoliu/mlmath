@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Author: Yuande Liu <miraclecome (at) gmail.com>
 
+# not support math, please use vscode to convert
 import sys
 import markdown
 

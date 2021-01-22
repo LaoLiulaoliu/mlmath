@@ -17,6 +17,7 @@ def replace(content):
 
 if __name__ == '__main__':
     """Usage: python3 to_zhihu_md.py generalized_linear_model.ipynb
+              python3 to_zhihu_md.py softmax.md
     """
     name, postfix = sys.argv[1].split('.')
     if postfix == 'ipynb':

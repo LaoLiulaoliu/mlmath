@@ -89,7 +89,7 @@ $$
 根据Softmax对 $z_j$的偏导数：
 $$
 \frac{\partial p_i}{\partial z_j} =
-\begin{cases} - p_i p_j, & \text {i $\neq$ j}\\
+\begin{cases} - p_i p_j, & i \neq j \\
 p_i - p_i^2, & \text {i = j} \end{cases}
 $$
 
@@ -116,14 +116,14 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-Softmax 只有两个类别的情况。
+Softmax 只有两个类别时跟Sigmoid等价。
 $$\begin{aligned}
 \mathcal{Softmax}(z_i) &= \frac{e^{z_i}}{\sum_{c=1}^C e^{z_c}} \\
 &= \frac{e^{z_1}}{e^{z_1} + e^{z_2}}, & \text{when} C = 2 \\
-&= \frac{1}{1 + e^{z_2 - z_1}}, & \text{divide up and down}
+&= \frac{1}{1 + e^{z_2 - z_1}}, & \text{divide up and down} \\
+&= \frac{1}{1 + e^{-z}}, & z_2 = 0, z_1 = z
 \end{aligned}
 $$
 
-$z_2 = 0, z_1 = z$
 #### References
 [1] [一文详解Softmax函数](https://zhuanlan.zhihu.com/p/105722023)
